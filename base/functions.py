@@ -23,9 +23,9 @@ def rosenbrock(input):
     return sum(100 * (input[i+1] - input[i]**2)**2 + (input[i] - 1)**2 for i in range(len(input) - 1))
 
 def griewank(input):
-    sum = sum(x**2/4000 for x in input)
+    term = sum(x**2/4000 for x in input)
     product = math.prod(math.cos(input[i]/math.sqrt(i+1)) for i in range(len(input)))
-    return 1 + sum - product
+    return 1 + term - product
 
 def schwefel(input):
     return 418.9829 * len(input) - sum(x * math.sin(math.sqrt(abs(x))) for x in input)
