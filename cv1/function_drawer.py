@@ -19,7 +19,7 @@ def plot_different_ranges(functions):
     
     subplot_titles = []
     for func in functions:
-        subplot_titles.extend([f"{func.name} - 3D Surface", f"{func.name} - Contour"])
+        subplot_titles.extend([f"{func.name} ({func.lower_bound} - {func.upper_bound})", f"{func.name} - Contour"])
     
     fig = make_subplots(
         rows=len(functions), cols=2,
