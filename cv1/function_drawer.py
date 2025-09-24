@@ -11,6 +11,9 @@ import base.functions as functions
 from base.function import Function
 import math
 
+import plotly.io as pio
+pio.renderers.default = "browser"
+
 def plot_different_ranges(functions):
     specs = [[{"type": "surface"}, {"type": "xy"}] for _ in functions]
     
