@@ -94,10 +94,6 @@ def plot_function_with_trace(func, trace, best_point, bounds=(-1, 1), grid_point
     ))
     fig.show()
 
-# Příklad trace a best_point
-trace = [(0.5, 0.5, 0.5), (0.3, 0.3, 0.18), (0.1, 0.1, 0.02)]
-best_point = (0.0, 0.0, 0.0)
-
 #trace, best_point = blind_search(functions.sphere, lower_bound=-5.12, upper_bound=5.12, iterations=50)
 trace, best_point = hillclimbing(functions.sphere, lower_bound=-5.12, upper_bound=5.12, iterations=50, radius=0.2)
 plot_function_with_trace(functions.sphere, trace, best_point, bounds=(-5.12, 5.12))
