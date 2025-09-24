@@ -47,8 +47,8 @@ def plot_different_ranges(functions):
         )
 
     fig.update_layout(
-        height=500 * len(functions),  # Větší výška pro každou funkci
-        width=1400,  # Větší celková šířka
+        height=500 * len(functions),
+        width=1400,
         title_text="Optimalizační funkce - 3D Surface a Contour grafy",
         showlegend=False
     )
@@ -60,11 +60,11 @@ fcs = [
     Function(functions.ackley, "Ackley", -32.768, 32.768, 100),
     Function(functions.rastrigin, "Rastrigin", -5.12, 5.12, 100),
     Function(functions.rosenbrock, "Rosenbrock", -2.048, 2.048, 100),
-    Function(functions.griewank, "Griewank", -600, 600, 100),
+    Function(functions.griewank, "Griewank", -5, 5, 100),
     Function(functions.schwefel, "Schwefel", -500, 500, 100),
     Function(functions.levy, "Levy", -10, 10, 100),
     Function(functions.michalewicz, "Michalewicz", 0, math.pi, 100),
-    Function(functions.zakharov, "Zakharov", -5, 10, 100)
+    Function(functions.zakharov, "Zakharov", -10, 10, 100)
 ]
 
 plot_different_ranges(fcs)
