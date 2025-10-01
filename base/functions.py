@@ -1,4 +1,6 @@
 import math
+from base.function import Function
+
 
 def sphere(input):
     return sum(x**2 for x in input)
@@ -51,3 +53,15 @@ def zakharov(input):
     sum3 = sum(0.5 * (i+1) * input[i] for i in range(d))**4
 
     return sum1 + sum2 + sum3
+
+fcs = [
+    Function(sphere, "Sphere", (-5.12, 5.12), 100),
+    Function(ackley, "Ackley", (-32.768, 32.768), 100),
+    Function(rastrigin, "Rastrigin", (-5.12, 5.12), 100),
+    Function(rosenbrock, "Rosenbrock", (-2.048, 2.048), 100),
+    Function(griewank, "Griewank", (-5, 5), 100),
+    Function(schwefel, "Schwefel", (-500, 500), 100),
+    Function(levy, "Levy", (-10, 10), 100),
+    Function(michalewicz, "Michalewicz", (0, math.pi), 100),
+    Function(zakharov, "Zakharov", (-10, 10), 100)
+]

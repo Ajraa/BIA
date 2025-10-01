@@ -19,7 +19,7 @@ def plot_different_ranges(functions):
     
     subplot_titles = []
     for func in functions:
-        subplot_titles.extend([f"{func.name} ({func.lower_bound} - {func.upper_bound})", f"{func.name} - Contour"])
+        subplot_titles.extend([f"{func.name} ({func.bounds[0]} - {func.bounds[1]})", f"{func.name} - Contour"])
     
     fig = make_subplots(
         rows=len(functions), cols=2,
@@ -31,8 +31,8 @@ def plot_different_ranges(functions):
     )
 
     for i, func in enumerate(functions):
-        x = np.linspace(func.lower_bound, func.upper_bound, func.points)
-        y = np.linspace(func.lower_bound, func.upper_bound, func.points)
+        x = np.linspace(func.bounds[0], func.bounds[1], func.points)
+        y = np.linspace(func.bounds[0], func.bounds[1], func.points)
         X, Y = np.meshgrid(x, y)
         Z = np.array([[func.do(xi, yi) for xi in x] for yi in y])
         
@@ -55,16 +55,5 @@ def plot_different_ranges(functions):
     
     fig.show()
 
-fcs = [
-    Function(functions.sphere, "Sphere", -5.12, 5.12, 100),
-    Function(functions.ackley, "Ackley", -32.768, 32.768, 100),
-    Function(functions.rastrigin, "Rastrigin", -5.12, 5.12, 100),
-    Function(functions.rosenbrock, "Rosenbrock", -2.048, 2.048, 100),
-    Function(functions.griewank, "Griewank", -5, 5, 100),
-    Function(functions.schwefel, "Schwefel", -500, 500, 100),
-    Function(functions.levy, "Levy", -10, 10, 100),
-    Function(functions.michalewicz, "Michalewicz", 0, math.pi, 100),
-    Function(functions.zakharov, "Zakharov", -10, 10, 100)
-]
 
-plot_different_ranges(fcs)
+plot_different_ranges(functions.fcs)
