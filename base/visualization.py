@@ -4,6 +4,41 @@ import plotly.graph_objects as go
 import plotly.io as pio
 pio.renderers.default = "browser"
 
+def plot_function_with_trace(func, trace, best_point, bounds=(-1, 1), grid_points=50):
+    lower, upper = bounds
+    x = np.linspace(lower, upper, grid_points)
+    y = np.linspace(lower, upper, grid_points)
+    X, Y = np.meshgrid(x, y)
+    Z = np.array([[func([X[i,j], Y[i,j]]) for j in range(grid_points)] for i in range(grid_points)])
+    
+    surface = go.Surface(x=X, y=Y, z=Z, colorscale='Viridis', opacity=0.8)
+    
+    trace_points = go.Scatter3d(
+        x=[p[0] for p in trace],
+        y=[p[1] for p in trace],
+        z=[p[2] for p in trace],
+        mode='markers',
+        marker=dict(size=5, color='red'),
+        name='Trace'
+    )
+    
+    best = go.Scatter3d(
+        x=[best_point[0]],
+        y=[best_point[1]],
+        z=[best_point[2]],
+        mode='markers',
+        marker=dict(size=8, color='blue'),
+        name='Best point'
+    )
+    
+    fig = go.Figure(data=[surface, trace_points, best])
+    fig.update_layout(scene=dict(
+        xaxis_title='X',
+        yaxis_title='Y',
+        zaxis_title='Z'
+    ))
+    fig.show()
+
 def animate_function_with_trace(func, trace, best_point, bounds=(-1, 1), grid_points=50):
     lower, upper = bounds
     x = np.linspace(lower, upper, grid_points)

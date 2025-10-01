@@ -1,13 +1,9 @@
 import numpy as np
-import plotly.graph_objects as go
-
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import base.functions as functions
-
-import plotly.io as pio
-pio.renderers.default = "browser"
+import base.visualization as visualization
 
 def blind_search(func, lower_bound, upper_bound, iterations):
     min_value = np.inf
@@ -59,41 +55,6 @@ def hillclimbing(func, lower_bound, upper_bound, iterations, radius, points_per_
 
     return trace, (min_x, min_y, min_value)
 
-def plot_function_with_trace(func, trace, best_point, bounds=(-1, 1), grid_points=50):
-    lower, upper = bounds
-    x = np.linspace(lower, upper, grid_points)
-    y = np.linspace(lower, upper, grid_points)
-    X, Y = np.meshgrid(x, y)
-    Z = np.array([[func([X[i,j], Y[i,j]]) for j in range(grid_points)] for i in range(grid_points)])
-    
-    surface = go.Surface(x=X, y=Y, z=Z, colorscale='Viridis', opacity=0.8)
-    
-    trace_points = go.Scatter3d(
-        x=[p[0] for p in trace],
-        y=[p[1] for p in trace],
-        z=[p[2] for p in trace],
-        mode='markers',
-        marker=dict(size=5, color='red'),
-        name='Trace'
-    )
-    
-    best = go.Scatter3d(
-        x=[best_point[0]],
-        y=[best_point[1]],
-        z=[best_point[2]],
-        mode='markers',
-        marker=dict(size=8, color='blue'),
-        name='Best point'
-    )
-    
-    fig = go.Figure(data=[surface, trace_points, best])
-    fig.update_layout(scene=dict(
-        xaxis_title='X',
-        yaxis_title='Y',
-        zaxis_title='Z'
-    ))
-    fig.show()
-
 #trace, best_point = blind_search(functions.sphere, lower_bound=-5.12, upper_bound=5.12, iterations=50)
 trace, best_point = hillclimbing(functions.sphere, lower_bound=-5.12, upper_bound=5.12, iterations=50, radius=0.2)
-plot_function_with_trace(functions.sphere, trace, best_point, bounds=(-5.12, 5.12))
+visualization.plot_function_with_trace(functions.sphere, trace, best_point, bounds=(-5.12, 5.12))
