@@ -11,6 +11,7 @@ import plotly.graph_objects as go
 import numpy as np
 import math
 import base.functions as functions
+import base.visualization as visualization
 
 def simulated_annealing(func, initial_temp, min_temp, lower_bound, upper_bound, alpha, radius):
     temp = initial_temp
@@ -51,10 +52,12 @@ def simulated_annealing(func, initial_temp, min_temp, lower_bound, upper_bound, 
 
 trace, best_point = simulated_annealing(
     func=functions.sphere,
-    initial_temp=50,       # počáteční teplota
-    min_temp=1e-4,         # minimální teplota
-    lower_bound=-5.12,        # dolní hranice pro všechny dimenze
-    upper_bound=5.12,         # horní hranice pro všechny dimenze
-    alpha=0.95,            # faktor ochlazování
-    radius=0.5             # velikost kroku při generování sousedů
+    initial_temp=50,
+    min_temp=1e-4,
+    lower_bound=-5.12,
+    upper_bound=5.12, 
+    alpha=0.95,
+    radius=0.5
 )
+
+visualization.animate_function_with_trace(func=functions.sphere, trace=trace, best_point=best_point, bounds=(-5.12, 5.12), grid_points=100);
