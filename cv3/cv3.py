@@ -1,5 +1,12 @@
+import sys
+import os
+
+# Přidá parent directory (kde je base složka) do Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import numpy as np
 import random
+import base.visualization as visualization
 
 def create_distance_matrix(cities):
     n = len(cities)
@@ -24,7 +31,7 @@ def select(cities):
 
 def rank_routes(population, matrix):
     results = {i: calculate_distance(route, matrix) for i, route in enumerate(population)}
-    return sorted(results.items(), key=lambda x: x[1], reverse=True)
+    return sorted(results.items(), key=lambda x: x[1], reverse=False)
 
 def ordered_crossover(parent1, parent2):
     start, end = sorted(random.sample(range(len(parent1)), 2))
@@ -77,8 +84,12 @@ def genetic_algorithm(cities, population_size, mutation_rate, generations):
     distances = create_distance_matrix(cities)
     population = [create_route(len(cities)) for _ in range(population_size)]
 
-    for i in range(generations):
+    for _ in range(generations):
         population = next_generation(population, distances, mutation_rate)
 
     best_route_index = rank_routes(population, distances)[0][0]
     return population[best_route_index]
+
+cities = [(random.randint(0, 200), random.randint(0, 200)) for _ in range(15)]
+best = genetic_algorithm(cities, population_size=100, mutation_rate=0.02, generations=100)
+visualization.animate_tsp_best_route(cities, best)
