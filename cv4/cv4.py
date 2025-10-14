@@ -5,6 +5,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import base.functions as functions
+import base.visualization as visualization
 import numpy as np
 
 
@@ -44,11 +45,12 @@ def mutate_and_crossover(pop, pop_size, fitness, F, CR, lb, ub, dim):
         new_pop[i] = u
     return new_pop
 
-def shade(func, pop_size=20, dim=3, max_gen=1000, H=10, lb=-5, ub=5):
+def shade(func, pop_size=20, dim=2, max_gen=150, H=10, lb=-5, ub=5):
     pop, fitness = initialize_population(pop_size, dim, lb, ub, func)
     M_F = np.full(H, 0.5)
     M_CR = np.full(H, 0.5)
     k = 0
+    trace = []
 
     for gen in range(max_gen):
         new_pop = np.zeros_like(pop)
@@ -57,7 +59,6 @@ def shade(func, pop_size=20, dim=3, max_gen=1000, H=10, lb=-5, ub=5):
         for i in range(pop_size):
             F, CR = generate_params(M_F, M_CR, H)
             offspring = mutate_and_crossover(pop, pop_size, fitness, F, CR, lb, ub, dim)[i]
-            print(offspring)
             offspring_fitness = func(offspring)
 
             if offspring_fitness < fitness[i]:
@@ -68,15 +69,21 @@ def shade(func, pop_size=20, dim=3, max_gen=1000, H=10, lb=-5, ub=5):
         
         pop = new_pop
         fitness = np.array([func(ind) for ind in pop])
+        best_idx = np.argmin(fitness)
+        best_vector = pop[best_idx]
+        best_value = fitness[best_idx]
+
+        trace.append((best_vector[0], best_vector[1], best_value))
 
         if len(S_F) > 0:
             w = np.array(delta_f) / sum(delta_f)
             M_F[k] = np.sum(w * np.array(S_F)**2) / np.sum(w * np.array(S_F))
             M_CR[k] = np.sum(w * np.array(S_CR))
             k = (k + 1) % H
-            
+
     best_idx = np.argmin(fitness)
-    return pop[best_idx], fitness[best_idx]
+    xy = pop[best_idx]
+    return trace, (xy[0], xy[1], fitness[best_idx])
 
-
-shade(functions.sphere)
+trace, best_point = shade(functions.schwefel, lb=-500, ub=500)
+visualization.animate_function_with_trace(func=functions.schwefel, trace=trace, best_point=best_point, bounds=(-500, 500), grid_points=100);
