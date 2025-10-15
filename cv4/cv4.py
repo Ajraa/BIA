@@ -7,11 +7,11 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import base.functions as functions
 import base.visualization as visualization
 import numpy as np
-
+import math
 
 def initialize_population(size, dim, lb, ub, func):
     pop = np.random.uniform(lb, ub, (size, dim))
-    fitness = np.array([func(ind) for ind in pop]) # hodnota c9lové funkce pro každého jedince
+    fitness = np.array([func(ind) for ind in pop]) # hodnota cílové funkce pro každého jedince
     return pop, fitness
 
 def generate_params(M_F, M_CR, H):
@@ -45,12 +45,13 @@ def mutate_and_crossover(pop, pop_size, fitness, F, CR, lb, ub, dim):
         new_pop[i] = u
     return new_pop
 
-def shade(func, pop_size=20, dim=2, max_gen=150, H=10, lb=-5, ub=5):
+def shade(func, pop_size=20, dim=2, max_gen=150, H=10, lb=-5, ub=5, CR=0.5, F=0.8):
     pop, fitness = initialize_population(pop_size, dim, lb, ub, func)
-    M_F = np.full(H, 0.5)
-    M_CR = np.full(H, 0.5)
+    M_F = np.full(H, F)
+    M_CR = np.full(H, CR)
     k = 0
     trace = []
+    best_point = (float('inf'), float('inf'), float('inf'))
 
     for gen in range(max_gen):
         new_pop = np.zeros_like(pop)
@@ -74,6 +75,8 @@ def shade(func, pop_size=20, dim=2, max_gen=150, H=10, lb=-5, ub=5):
         best_value = fitness[best_idx]
 
         trace.append((best_vector[0], best_vector[1], best_value))
+        if best_value < best_point[2]:
+            best_point = (best_vector[0], best_vector[1], best_value)
 
         if len(S_F) > 0:
             w = np.array(delta_f) / sum(delta_f)
@@ -81,9 +84,7 @@ def shade(func, pop_size=20, dim=2, max_gen=150, H=10, lb=-5, ub=5):
             M_CR[k] = np.sum(w * np.array(S_CR))
             k = (k + 1) % H
 
-    best_idx = np.argmin(fitness)
-    xy = pop[best_idx]
-    return trace, (xy[0], xy[1], fitness[best_idx])
+    return trace, best_point
 
-trace, best_point = shade(functions.schwefel, lb=-500, ub=500)
+trace, best_point = shade(functions.schwefel, lb=-500, ub=500, CR=0.9, F=0.7)
 visualization.animate_function_with_trace(func=functions.schwefel, trace=trace, best_point=best_point, bounds=(-500, 500), grid_points=100);
