@@ -1,5 +1,13 @@
+import sys
+import os
+
+# Přidá parent directory (kde je base složka) do Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import base.functions as functions
+import base.visualization as visualization
 import random
-import math
+
 
 def particle_swarm_optimization(
     func, 
@@ -24,7 +32,7 @@ def particle_swarm_optimization(
         particles.append(position)
         velocities.append(velocity)
         personal_best_positions.append(position[:])
-        personal_best_scores.append(func(position))
+        personal_best_scores.append(func.do(position))
 
     trace.append([(particles[i][0], particles[i][1], personal_best_scores[i]) for i in range(num_particles)])
  
@@ -46,7 +54,7 @@ def particle_swarm_optimization(
 
                 particles[i][d] = max(bounds[d][0], min(bounds[d][1], particles[i][d]))
 
-            score = func(particles[i])
+            score = func.do(particles[i])
             iter_trace.append((particles[i][0], particles[i][1], score))
             if score < personal_best_scores[i]:
                 personal_best_scores[i] = score
@@ -58,3 +66,7 @@ def particle_swarm_optimization(
         trace.append(iter_trace)
 
     return trace, (global_best_position, global_best_score)
+
+fc = functions.function_dict["Griewank"]
+trace, best_point = particle_swarm_optimization(func=fc, dim=2, num_particles=30, max_iter=100)
+visualization.animate_particle_swarm(func=fc, trace=trace, best_result=best_point, grid_points=100);

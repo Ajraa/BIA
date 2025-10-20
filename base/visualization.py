@@ -333,3 +333,185 @@ def animate_tsp_best_route(cities, best_route):
     )
     
     fig.show()
+
+def animate_particle_swarm(func, trace, best_result, grid_points=50):
+    """
+    Animate particle swarm optimization on a 3D surface.
+    
+    Args:
+        func: The objective function to visualize
+        trace: List of lists, where each sublist contains (x, y, z) tuples for all particles at that iteration
+        best_result: Tuple of ([x, y], score) from PSO
+        bounds: Tuple of (lower, upper) bounds for the search space
+        grid_points: Number of grid points for surface mesh
+    """
+    import numpy as np
+    import plotly.graph_objects as go
+    
+    lower, upper = func.bounds
+    x = np.linspace(lower, upper, grid_points)
+    y = np.linspace(lower, upper, grid_points)
+    X, Y = np.meshgrid(x, y)
+    Z = np.array([[func.do([X[i,j], Y[i,j]]) for j in range(grid_points)] for i in range(grid_points)])
+    
+    # Extract best position and score
+    best_position, best_score = best_result
+    
+    # Create surface
+    surface = go.Surface(
+        x=X, y=Y, z=Z, 
+        colorscale='Viridis', 
+        opacity=0.7,
+        name='Function',
+        showscale=True
+    )
+    
+    # Initial particle positions (empty)
+    particles_scatter = go.Scatter3d(
+        x=[],
+        y=[],
+        z=[],
+        mode='markers',
+        marker=dict(
+            size=6, 
+            color='red',
+            symbol='circle',
+            line=dict(color='darkred', width=1)
+        ),
+        name='Particles'
+    )
+    
+    # Best point
+    best_point = go.Scatter3d(
+        x=[best_position[0]],
+        y=[best_position[1]],
+        z=[best_score],
+        mode='markers',
+        marker=dict(
+            size=12, 
+            color='gold',
+            symbol='diamond',
+            line=dict(color='orange', width=2)
+        ),
+        name='Global Best'
+    )
+    
+    fig = go.Figure(data=[surface, particles_scatter, best_point])
+    
+    # Create animation frames
+    frames = []
+    for iteration, particle_positions in enumerate(trace):
+        frame_data = [
+            surface,
+            go.Scatter3d(
+                x=[p[0] for p in particle_positions],
+                y=[p[1] for p in particle_positions],
+                z=[p[2] for p in particle_positions],
+                mode='markers',
+                marker=dict(
+                    size=6, 
+                    color='red',
+                    symbol='circle',
+                    line=dict(color='darkred', width=1)
+                ),
+                name='Particles'
+            ),
+            best_point
+        ]
+        frames.append(go.Frame(data=frame_data, name=str(iteration)))
+    
+    fig.frames = frames
+    
+    # Layout with controls
+    fig.update_layout(
+        title=dict(
+            text=f"Particle Swarm Optimization ({len(trace[0])} particles, {len(trace)} iterations)<br>Best: {best_score:.6e}",
+            x=0.5,
+            xanchor='center'
+        ),
+        scene=dict(
+            xaxis_title='X',
+            yaxis_title='Y',
+            zaxis_title='Z (Function Value)',
+            camera=dict(
+                eye=dict(x=1.5, y=1.5, z=1.2)
+            ),
+            aspectmode='cube'
+        ),
+        updatemenus=[{
+            'type': 'buttons',
+            'showactive': False,
+            'buttons': [
+                {
+                    'label': '▶ Play',
+                    'method': 'animate',
+                    'args': [None, {
+                        'frame': {'duration': 200, 'redraw': True},
+                        'fromcurrent': True,
+                        'mode': 'immediate',
+                        'transition': {'duration': 100}
+                    }]
+                },
+                {
+                    'label': '⏸ Pause',
+                    'method': 'animate',
+                    'args': [[None], {
+                        'frame': {'duration': 0, 'redraw': False},
+                        'mode': 'immediate',
+                        'transition': {'duration': 0}
+                    }]
+                },
+                {
+                    'label': '⏮ Reset',
+                    'method': 'animate',
+                    'args': [[frames[0].name], {
+                        'frame': {'duration': 0, 'redraw': True},
+                        'mode': 'immediate',
+                        'transition': {'duration': 0}
+                    }]
+                }
+            ],
+            'x': 0.1,
+            'y': 1.08,
+            'xanchor': 'left',
+            'yanchor': 'top'
+        }],
+        sliders=[{
+            'active': 0,
+            'steps': [
+                {
+                    'args': [[f.name], {
+                        'frame': {'duration': 0, 'redraw': True},
+                        'mode': 'immediate',
+                        'transition': {'duration': 0}
+                    }],
+                    'label': f'Iter {i}',
+                    'method': 'animate'
+                }
+                for i, f in enumerate(frames)
+            ],
+            'x': 0.1,
+            'len': 0.85,
+            'xanchor': 'left',
+            'y': 0.02,
+            'yanchor': 'top',
+            'pad': {'b': 10, 't': 50},
+            'currentvalue': {
+                'visible': True,
+                'prefix': 'Iteration: ',
+                'xanchor': 'right',
+                'font': {'size': 14, 'color': '#666'}
+            },
+            'transition': {'duration': 100}
+        }],
+        height=700,
+        showlegend=True,
+        legend=dict(x=0.7, y=0.95)
+    )
+    
+    fig.show()
+
+
+# Example usage with your PSO function:
+# trace, best = particle_swarm_optimization(func, dim=2, num_particles=30, max_iter=100)
+# animate_particle_swarm(func, trace, best, bounds=func.bounds)

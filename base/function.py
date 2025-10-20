@@ -7,3 +7,6 @@ class Function:
 
     def do(self, x, y):
         return self.func([x, y])
+    
+    def do(self, x):
+        return self.func(x)

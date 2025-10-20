@@ -65,3 +65,5 @@ fcs = [
     Function(michalewicz, "Michalewicz", (0, math.pi), 100),
     Function(zakharov, "Zakharov", (-10, 10), 100)
 ]
+
+function_dict = {fc.name: fc for fc in fcs}
