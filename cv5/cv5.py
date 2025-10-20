@@ -25,11 +25,14 @@ def particle_swarm_optimization(
         velocities.append(velocity)
         personal_best_positions.append(position[:])
         personal_best_scores.append(func(position))
-    
+
+    trace.append([(particles[i][0], particles[i][1], personal_best_scores[i]) for i in range(num_particles)])
+ 
     global_best_position = personal_best_positions[personal_best_scores.index(min(personal_best_scores))]
     global_best_score = min(personal_best_scores)
     
     for _ in range(max_iter):
+        iter_trace = []
         for i in range(num_particles):
             for d in range(dim):
                 r1 = random.random()
@@ -44,7 +47,7 @@ def particle_swarm_optimization(
                 particles[i][d] = max(bounds[d][0], min(bounds[d][1], particles[i][d]))
 
             score = func(particles[i])
-            trace.append((particles[i][:], score))
+            iter_trace.append((particles[i][0], particles[i][1], score))
             if score < personal_best_scores[i]:
                 personal_best_scores[i] = score
                 personal_best_positions[i] = particles[i][:]
@@ -52,5 +55,6 @@ def particle_swarm_optimization(
                 if score < global_best_score:
                     global_best_score = score
                     global_best_position = particles[i][:]
+        trace.append(iter_trace)
 
     return trace, (global_best_position, global_best_score)
