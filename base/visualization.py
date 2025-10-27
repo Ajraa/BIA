@@ -334,7 +334,7 @@ def animate_tsp_best_route(cities, best_route):
     
     fig.show()
 
-def animate_particle_swarm(func, trace, best_result, grid_points=50):
+def animate_particle_swarm(func, trace, best_result, grid_points=50, title ="Particle Swarm Optimization"):
     """
     Animate particle swarm optimization on a 3D surface.
     
@@ -425,7 +425,7 @@ def animate_particle_swarm(func, trace, best_result, grid_points=50):
     # Layout with controls
     fig.update_layout(
         title=dict(
-            text=f"Particle Swarm Optimization ({len(trace[0])} particles, {len(trace)} iterations)<br>Best: {best_score:.6e}",
+            text=f"{title} ({len(trace[0])} particles, {len(trace)} iterations)<br>Best: {best_score:.6e}",
             x=0.5,
             xanchor='center'
         ),
@@ -510,8 +510,3 @@ def animate_particle_swarm(func, trace, best_result, grid_points=50):
     )
     
     fig.show()
-
-
-# Example usage with your PSO function:
-# trace, best = particle_swarm_optimization(func, dim=2, num_particles=30, max_iter=100)
-# animate_particle_swarm(func, trace, best, bounds=func.bounds)

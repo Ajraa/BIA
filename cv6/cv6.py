@@ -53,4 +53,4 @@ trace, best_point = soma(
     dim=2
 )
 print(len(trace))
-visualization.animate_particle_swarm(func=fc, trace=trace, best_result=best_point, grid_points=100);
+visualization.animate_particle_swarm(func=fc, trace=trace, best_result=best_point, grid_points=100, title="SOMA Optimization");
