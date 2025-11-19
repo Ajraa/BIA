@@ -86,5 +86,6 @@ def shade(func, pop_size=20, dim=2, max_gen=150, H=10, lb=-5, ub=5, CR=0.5, F=0.
 
     return trace, best_point
 
-trace, best_point = shade(functions.schwefel, lb=-500, ub=500, CR=0.9, F=0.7)
-visualization.animate_function_with_trace(func=functions.schwefel, trace=trace, best_point=best_point, bounds=(-500, 500), grid_points=100);
+if __name__ == "__main__":
+    trace, best_point = shade(functions.schwefel, lb=-500, ub=500, CR=0.9, F=0.7)
+    visualization.animate_function_with_trace(func=functions.schwefel, trace=trace, best_point=best_point, bounds=(-500, 500), grid_points=100);

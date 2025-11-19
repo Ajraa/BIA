@@ -23,12 +23,12 @@ def particle_swarm_optimization(
     personal_best_positions = []
     personal_best_scores = []
     trace = []
-
-    bounds = [func.bounds, func.bounds]
+    # use function bounds for all dimensions
+    lb, ub = func.bounds
 
     for _ in range(num_particles):
-        position = [random.uniform(bounds[i][0], bounds[i][1]) for i in range(dim)]
-        velocity = [random.uniform(-abs(bounds[i][1] - bounds[i][0]), abs(bounds[i][1] - bounds[i][0])) * 0.1 for i in range(dim)]
+        position = [random.uniform(lb, ub) for _ in range(dim)]
+        velocity = [random.uniform(-abs(ub - lb), abs(ub - lb)) * 0.1 for _ in range(dim)]
         particles.append(position)
         velocities.append(velocity)
         personal_best_positions.append(position[:])
@@ -52,7 +52,7 @@ def particle_swarm_optimization(
                 )
                 particles[i][d] += velocities[i][d]
 
-                particles[i][d] = max(bounds[d][0], min(bounds[d][1], particles[i][d]))
+                particles[i][d] = max(lb, ub, particles[i][d])
 
             score = func.do(particles[i])
             iter_trace.append((particles[i][0], particles[i][1], score))
@@ -67,6 +67,8 @@ def particle_swarm_optimization(
 
     return trace, (global_best_position, global_best_score)
 
-fc = functions.function_dict["Griewank"]
-trace, best_point = particle_swarm_optimization(func=fc, dim=2, num_particles=30, max_iter=100)
-visualization.animate_particle_swarm(func=fc, trace=trace, best_result=best_point, grid_points=100);
+if __name__ == "__main__":
+    fc = functions.function_dict["Michalewicz"]
+    trace, best_point = particle_swarm_optimization(func=fc, dim=2, num_particles=30, max_iter=100)
+    print(len(trace))
+    #visualization.animate_particle_swarm(func=fc, trace=trace, best_result=best_point, grid_points=100);

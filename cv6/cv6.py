@@ -34,6 +34,7 @@ def soma(func, pop_size=30, dim=2, path_length=3.0, step=0.11, prt=0.1, migratio
                     fitness[i] = new_fit
                 t += step
 
+        trace.append([(pop[p][0], pop[p][1], fitness[p]) for p in range(pop_size)])
         best_idx = np.argmin(fitness)
         if fitness[best_idx] < best_fitness:
             best_fitness = fitness[best_idx]
@@ -42,15 +43,15 @@ def soma(func, pop_size=30, dim=2, path_length=3.0, step=0.11, prt=0.1, migratio
         div = np.mean(np.std(pop, axis=0))
         if div < min_div:
             break
-        trace.append([(pop[p][0], pop[p][1], fitness[p]) for p in range(pop_size)])
 
 
     return trace, (best, best_fitness)
 
-fc = functions.function_dict["Griewank"]
-trace, best_point = soma(
-    func=fc,
-    dim=2
-)
-print(len(trace))
-visualization.animate_particle_swarm(func=fc, trace=trace, best_result=best_point, grid_points=100, title="SOMA Optimization");
+if __name__ == "__main__":
+    fc = functions.function_dict["Michalewicz"]
+    trace, best_point = soma(
+        func=fc,
+        dim=2
+    )
+    print(len(trace))
+    visualization.animate_particle_swarm(func=fc, trace=trace, best_result=best_point, grid_points=100, title="SOMA Optimization");

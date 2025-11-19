@@ -8,12 +8,12 @@ import numpy as np
 import base.functions as functions
 import base.visualization as visualization
 
-def firefly_algorithm(func, n_fireflies=25, max_iter=100, 
+def firefly_algorithm(func, dim=2, n_fireflies=25, max_iter=100, 
                      alpha=0.5, beta_0=1.0):
-    dim = len(func.bounds)
-    
-    lower_bounds = (func.bounds[0], func.bounds[0])
-    upper_bounds = (func.bounds[1], func.bounds[1])
+    # Use provided dimensionality (dim) and function bounds
+    lb, ub = func.bounds
+    lower_bounds = np.array([lb] * dim)
+    upper_bounds = np.array([ub] * dim)
 
     fireflies = np.random.uniform(lower_bounds, upper_bounds, (n_fireflies, dim))
     
@@ -23,10 +23,10 @@ def firefly_algorithm(func, n_fireflies=25, max_iter=100,
     best_position = fireflies[best_idx].copy()
     best_fitness = fitness[best_idx]
     trace = []
-    trace.append([(fireflies[p][0], fireflies[p][1], fitness[p]) for p in range(n_fireflies)])
+    trace.append([(fireflies[p][0], fireflies[p][1] if dim>1 else fireflies[p][0], fitness[p]) for p in range(n_fireflies)])
 
     for iteration in range(max_iter):
-        # náhodný krok se zmenšující se s časem
+        # náhodný element zmenšující se s časem
         alpha_t = alpha * (1 - iteration / max_iter)
         
         for i in range(n_fireflies):
@@ -46,7 +46,6 @@ def firefly_algorithm(func, n_fireflies=25, max_iter=100,
                     fireflies[i] = (fireflies[i] + 
                                    beta * (fireflies[j] - fireflies[i]) + 
                                    alpha_t * epsilon)
-                    
                     fireflies[i] = np.clip(fireflies[i], lower_bounds, upper_bounds)
                     
                     fitness[i] = func.do(fireflies[i])
@@ -62,11 +61,11 @@ def firefly_algorithm(func, n_fireflies=25, max_iter=100,
 
 
 if __name__ == "__main__":
-    fc = functions.function_dict["Schwefel"]
+    fc = functions.function_dict["Michalewicz"]
     trace, best_point = firefly_algorithm(
         func=fc,
         n_fireflies=50,
-        max_iter=200,
+        max_iter=50,
         alpha=1.0,
         beta_0=1.0
     )
